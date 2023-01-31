@@ -62,3 +62,29 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             break
     cap.release()
     cv2.destroyAllWindows()
+
+def extract_keypoints(results):
+    pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
+    face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468*3)
+    lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
+    rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
+    return np.concatenate([pose, face, lh, rh])
+
+# Path for exported data, numpy arrays
+DATA_PATH = os.path.join('MP_Data') 
+
+# Actions that we try to detect
+actions = np.array(['sit', 'laydown', 'spin'])
+
+# Thirty videos worth of data
+no_sequences = 30
+
+# Videos are going to be 30 frames in length
+sequence_length = 30
+
+for action in actions: 
+    for sequence in range(no_sequences):
+        try: 
+            os.makedirs(os.path.join(DATA_PATH, action, str(sequence)))
+        except:
+            pass
