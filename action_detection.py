@@ -5,10 +5,12 @@ from matplotlib import pyplot as plt
 import time
 import mediapipe as mp
 
-import tkinter as tk
-from PIL import Image, ImageTk
-
 from tensorflow.keras.models import load_model
+
+import tkinter as tk
+from tkinter import *
+from PIL import Image, ImageTk
+from itertools import cycle
 
 mp_holistic = mp.solutions.holistic # Holistic model
 mp_drawing = mp.solutions.drawing_utils # Drawing utilities
@@ -120,10 +122,48 @@ def open_camera():
         cv2.destroyAllWindows()
 
 def open_instructions():
-    print("heyyyy")
+    root.destroy()
+
+    instructions_window = tk.Tk()
+    instructions_window.title("Hand Signal Training")
+
+    image_files = [
+        'assets/action_laydown.png',
+        'assets/action_sit.png',
+        'assets/action_up.png',
+        'assets/action_spin.png',
+        'assets/action_stay.png']
+
+    instructions_window.geometry("750x500")
+ 
+    Label(instructions_window, text ="Here are a few hand signals you can try:").pack()
+
+    # assign custom time between two images
+    instructions_window.delay = 1000
+
+    # create iterator for picture
+    instructions_window.pictures = cycle((tk.PhotoImage(file=image),image) for image in image_files)
+
+    #create lable to display pictures
+    instructions_window.pictures_display = tk.Label(instructions_window)
+    instructions_window.pictures_display.pack()
+
+    show_slides(instructions_window)
+
+    instructions_window.mainloop()
+
+def show_slides(window):
+        #display next item in iterator
+        image_object, image_name = next(window.pictures)
+
+        #display the images with title after specified time
+        window.pictures_display.config(image=image_object)
+        window.title(image_name)
+        window.after(window.delay,window.show_slides)
 
 #################################### START WELCOME SCREEN #################################### 
 root = tk.Tk()
+root.title("Train your pet!")
 
 canvas = tk.Canvas(root, width=600, height=300)
 canvas.grid(columnspan=3, rowspan=3)
@@ -141,12 +181,13 @@ slogan.grid(columnspan=3, column=0, row=1)
 
 # Button
 opencam_text = tk.StringVar()
-opencam_btn = tk.Button(root, textvariable=opencam_text, command=lambda:open_camera(), font="Raleway", bg="#b85c2d", fg="white", height=2, width=15)
+opencam_btn = tk.Button(root, textvariable=opencam_text, command=lambda:open_instructions(), font="Raleway", bg="#b85c2d", fg="white", height=2, width=15)
 opencam_text.set("Get Started")
 opencam_btn.grid(column=1, row=2)
 
 canvas = tk.Canvas(root, width=600, height=200)
 canvas.grid(columnspan=3)
+
 
 root.mainloop()
 #################################### END WELCOME SCREEN #################################### 
