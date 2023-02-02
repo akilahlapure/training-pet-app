@@ -54,7 +54,6 @@ def extract_keypoints(results):
     return np.concatenate([pose, face, lh, rh])
 
 def open_camera():
-    opencam_text.set("Loading...")
 
     # Actions that we try to detect
     actions = np.array(['sit', 'laydown', 'spin', 'up', 'stay'])
@@ -124,68 +123,70 @@ def open_camera():
 def open_instructions():
     root.destroy()
 
-    instructions_window = tk.Tk()
-    instructions_window.title("Hand Signal Training")
+    instructions_window = Tk()
+    instructions_window.title("Instructions")
 
-    image_files = [
-        'assets/action_laydown.png',
-        'assets/action_sit.png',
-        'assets/action_up.png',
-        'assets/action_spin.png',
-        'assets/action_stay.png']
+    instructions_window.configure(bg='#F6EDD9')
 
-    instructions_window.geometry("750x500")
- 
-    Label(instructions_window, text ="Here are a few hand signals you can try:").pack()
+    canvas = Canvas(instructions_window, width = 750, height = 500, bg="#F6EDD9")
+    canvas.pack(expand=YES)
 
-    # assign custom time between two images
-    instructions_window.delay = 1000
+    img1 = PhotoImage(file = "assets/action_up1.png")
+    img2 = PhotoImage(file = "assets/action_stay1.png")
+    img3 = PhotoImage(file = "assets/action_spin1.png")
+    img4 = PhotoImage(file = "assets/action_sit1.png")
+    img5 = PhotoImage(file = "assets/action_laydown1.png")
 
-    # create iterator for picture
-    instructions_window.pictures = cycle((tk.PhotoImage(file=image),image) for image in image_files)
+    Label(text="Here are some training signals you can practice!", font=("Raleway bold", 18), bg="#F6EDD9").place(x=114, y=35)
 
-    #create lable to display pictures
-    instructions_window.pictures_display = tk.Label(instructions_window)
-    instructions_window.pictures_display.pack()
+    Label(instructions_window, image=img1, bg="#F6EDD9").place(x=130, y=73)
+    Label(text="Palm facing up, bring both arms\n upwards.", font=("Raleway", 8), bg="#F6EDD9").place(x=130, y=225)
 
-    show_slides(instructions_window)
+    Label(instructions_window, image=img2, bg="#F6EDD9").place(x=300, y=73)
+    Label(text="Keep palm facing forward.", font=("Raleway", 8), bg="#F6EDD9").place(x=316, y=225)
+
+    Label(instructions_window, image=img3, bg="#F6EDD9").place(x=470, y=73)
+    Label(text="Spin your index finger\n clockwise", font=("Raleway", 8), bg="#F6EDD9").place(x=493, y=225)
+
+    Label(instructions_window, image=img4, bg="#F6EDD9").place(x=215, y=257)
+    Label(text="Palm facing up, bring one arm\n upwards", font=("Raleway", 8), bg="#F6EDD9").place(x=215, y=408)
+
+    Label(instructions_window, image=img5, bg="#F6EDD9").place(x=385, y=257)
+    Label(text="Palm facing down, bring one\n arm downwards", font=("Raleway", 8), bg="#F6EDD9").place(x=385, y=408)
+
+    # Button
+    open_cam_text = tk.StringVar()
+    open_cam_btn = tk.Button(instructions_window, textvariable=open_cam_text, command=lambda:open_camera(), font="Raleway", bg="#b85c2d", fg="white", width=15)
+    open_cam_text.set("START")
+    open_cam_btn.place(x=300, y=447)
 
     instructions_window.mainloop()
 
-def show_slides(window):
-        #display next item in iterator
-        image_object, image_name = next(window.pictures)
-
-        #display the images with title after specified time
-        window.pictures_display.config(image=image_object)
-        window.title(image_name)
-        window.after(window.delay,window.show_slides)
-
 #################################### START WELCOME SCREEN #################################### 
 root = tk.Tk()
-root.title("Train your pet!")
+root.title("Welcome!")
 
-canvas = tk.Canvas(root, width=600, height=300)
+canvas = tk.Canvas(root, width=750, height=400, bg="#F6EDD9")
 canvas.grid(columnspan=3, rowspan=3)
 
 # Logo
-logo = Image.open('assets/logo_placeholder.jpg')
+logo = Image.open('assets/paw_logo.png')
 logo = ImageTk.PhotoImage(logo)
-logo_label = tk.Label(image=logo)
+logo_label = tk.Label(image=logo, bg="#F6EDD9")
 logo_label.image = logo
 logo_label.grid(column=1, row=0)
 
 # Slogan
-slogan = tk.Label(root, text="Train yourself to train your pet!", font="Raleway")
+slogan = tk.Label(root, text="Train yourself to train your pet!", font="Raleway", bg="#F6EDD9")
 slogan.grid(columnspan=3, column=0, row=1)
 
 # Button
-opencam_text = tk.StringVar()
-opencam_btn = tk.Button(root, textvariable=opencam_text, command=lambda:open_instructions(), font="Raleway", bg="#b85c2d", fg="white", height=2, width=15)
-opencam_text.set("Get Started")
-opencam_btn.grid(column=1, row=2)
+open_instruc_text = tk.StringVar()
+open_instruc_btn = tk.Button(root, textvariable=open_instruc_text, command=lambda:open_instructions(), font="Raleway", bg="#b85c2d", fg="white", height=2, width=15)
+open_instruc_text.set("Get Started")
+open_instruc_btn.grid(column=1, row=2)
 
-canvas = tk.Canvas(root, width=600, height=200)
+canvas = tk.Canvas(root, width=750, height=100, bg="#F6EDD9")
 canvas.grid(columnspan=3)
 
 
